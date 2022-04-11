@@ -300,31 +300,39 @@ void write_container_arr_textfile( const char outfile[],
 
 /* FILL: add any necessary functions for your code*/
 
-int quick_sort_partition(struct container *C, int low, int high){
+int quick_sort_partition(struct container *C, int start, int end){
   int i, j, pivot;
-  struct container temp, pivot_str;
-  
-  // select the rightmost element as pivot
-  assign_container(C, search_container(high));
-  
-  // pointer for greater element
-  i = (low - 1);
+  struct container temp;
 
-  // traverse each element of the array
-  // compare them with the pivot
-  for (j = low; j < high; j++) {
-    if (array[j] <= pivot) {
-      // if element smaller than pivot is found
-      // swap it with the greater element pointed by i
-      i++;
-      // swap element at i with element at j
-      swap_container_arr(C, i, j, &temp);
+  //pivot을 오른쪽 끝으로 선택, i는 오른쪽끝-1에서 시작
+  pivot = end;
+  i = end -1;
+  //pivot을 제외하고 앞뒤 비교하며 pivot위치 조정
+  for(j = start; j<end-1;j++){
+    //j값을 증가시키며 pivot값을 비교한다.
+    if (compare_container_arr(C,j,pivot)>=0){
+      //만약 C[j]값이 pivot보다 작으면 앞쪽(C[i])으로 옮겨준다. 그리고 i주소를+1한다.
+      swap_container_arr(C,i,j,&temp);
+      i--;
+      if(i<=j) break;
     }
   }
-  // swap the pivot element with the greater element at i
-  swap_container_arr(C,i+1,high,&temp);
-  // return the partition point
-  return (i + 1);
+  //마지막으로 pivot을 옮겨준다.
+  swap_container_arr(C,i+1,pivot,&temp);
+  //pivot의 위치를 return한다.
+  return i+1;
+}
+
+void quick_sort_recursive_arr(struct container *C, int start, int end){
+  int i,j,pi;
+  struct container temp;
+
+  if(start<end){
+    pi = quick_sort_partition(C, start, end);
+
+    quick_sort_recursive_arr(C,start,pi-1);
+    quick_sort_recursive_arr(C,pi+1,end);
+  }
 }
 
 void quick_sort_container_arr(struct container *C, int n) 
@@ -338,29 +346,12 @@ void quick_sort_container_arr(struct container *C, int n)
   */
 
   /*
-  1. pivot을 선택한다. >>맨 앞의 경우로
-  2. pivot에 따라 분류한다.
-  3. 반복 > recursive call
-  */
-
-  /*
   원래는 변수를 start, end 두개를 받아야하는데 변수를 하나만 받아서 바꿔야한다.
-  방법.. n이 들어오면
+  방법 1. 함수를 안에 하나 더 선언한다.
+  방법 2... 
   */
-  int i,j,q;
-  int low, high;
-
-  q = quick_sort_partition(C, i, j);
-
-  //1.pivot 선택 중간값이 선택되면 좋다.
-
-  //2.
-  if (low<high){
-    int pi = quick_sort_partition(C, low, high);
-
-    quick_sort_container_arr(C, j-1);
-    quick_sort_container_arr(C, j+1);
-  }
+  //method 1.
+  quick_sort_recursive_arr(C,0,n-1);
 }
 
 /////////////////////////////////////////////////////////////
