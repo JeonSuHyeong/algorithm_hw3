@@ -300,10 +300,47 @@ void write_container_arr_textfile( const char outfile[],
 
 /* FILL: add any necessary functions for your code*/
 
+void heapify(struct container *C, int n, int i){
+  
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    struct container temp;
+  
+    if (left < n && compare_container_arr(C,left,largest) > 0)  largest = left;
+    if (right < n && compare_container_arr(C,right,largest) > 0) largest = right;
+  
+    // Swap and continue heapifying if root is not largest
+    if (largest != i) {
+      swap_container_arr(C, i, largest, &temp);
+      heapify(C, n, largest);
+    }
+}
+
+
 void heap_locate_median3_container_arr(
     struct container *M3, struct container *C, int n)
 {
-  /* FILL */
+    struct container temp;
+
+    //buildmaxheapify
+    for (int i = n / 2 - 1; i >= 0; i--)
+        heapify(C, n, i);
+
+    // Heap sort
+    for (int i = n - 1; i >= 0; i--) {
+        swap_container_arr(C, 0, i, &temp);
+
+        // Heapify root element to get highest element at root again
+        heapify(C, i, 0);
+        if (i<n/2-1){
+            break;
+        }
+    }
+    copy_container(M3,   C+(n+1)/2-2);
+    copy_container(M3+1, C+(n+1)/2-1);
+    copy_container(M3+2, C+(n+1)/2);
 }
 
 /////////////////////////////////////////////////////////////
