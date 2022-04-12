@@ -306,19 +306,18 @@ int quick_sort_partition(struct container *C, int start, int end){
 
   //pivot을 오른쪽 끝으로 선택, i는 오른쪽끝-1에서 시작
   pivot = end;
-  i = end -1;
+  i = start -1;
   //pivot을 제외하고 앞뒤 비교하며 pivot위치 조정
-  for(j = start; j<end-1;j++){
+  for(j = start; j<end;j++){
     //j값을 증가시키며 pivot값을 비교한다.
-    if (compare_container_arr(C,j,pivot)>=0){
+    if (compare_container_arr(C,j,pivot)<=0){
       //만약 C[j]값이 pivot보다 작으면 앞쪽(C[i])으로 옮겨준다. 그리고 i주소를+1한다.
+      i++;
       swap_container_arr(C,i,j,&temp);
-      i--;
-      if(i<=j) break;
     }
   }
   //마지막으로 pivot을 옮겨준다.
-  swap_container_arr(C,i+1,pivot,&temp);
+  swap_container_arr(C,i+1,end,&temp);
   //pivot의 위치를 return한다.
   return i+1;
 }
