@@ -303,56 +303,46 @@ void write_container_arr_textfile( const char outfile[],
 int quick_sort_partition(struct container *C, int start, int end){
   int i, j, pivot;
   struct container temp;
-
-  //pivot을 오른쪽 끝으로 선택, i는 오른쪽끝-1에서 시작
+  
+  //choose the pivot, initialize i as start
   pivot = end;
   i = start -1;
-  //pivot을 제외하고 앞뒤 비교하며 pivot위치 조정
+  //compare the strings and swap the location except the pivot;
   for(j = start; j<end;j++){
-    //j값을 증가시키며 pivot값을 비교한다.
+    //increase the j, and compare C[j] to C[pivot];
     if (compare_container_arr(C,j,pivot)<=0){
-      //만약 C[j]값이 pivot보다 작으면 앞쪽(C[i])으로 옮겨준다. 그리고 i주소를+1한다.
+      //if C[j] is lower than C[pivot], then increase i and swap the location.
       i++;
       swap_container_arr(C,i,j,&temp);
     }
   }
-  //마지막으로 pivot을 옮겨준다.
+  //swap the pivot
   swap_container_arr(C,i+1,end,&temp);
-  //pivot의 위치를 return한다.
+  //return the location of pivot;
   return i+1;
 }
 
-void quick_sort_recursive_arr(struct container *C, int start, int end){
+void quick_sort_recursive_arr(struct container *C, int start, int end, int n){
   int i,j,pi;
   struct container temp;
-
-  if(start<end){
+  
+  int med_l = (n+1)/2-1;
+ 
+  //find the location of median and determine whether implement recursive func or not
+  if(start<end&&start<med_l+2&&end>med_l-2){
     pi = quick_sort_partition(C, start, end);
-    //find the location of pi, and determine whether to execute
-    if ((pi-start)>(end-start)/2){
-        quick_sort_recursive_arr(C,start,pi-1);
-    }
-    else{
-        quick_sort_recursive_arr(C,pi+1,end);
-    }
-
-    /*
-    else if((pi-start)<(end-start)/2){
-        quick_sort_recursive_arr(C,pi+1,end);
-    }
-    else{
-        quick_sort_recursive_arr(C,start,pi-1);
-        quick_sort_recursive_arr(C,pi+1,end);
-    }
-    */
+        quick_sort_recursive_arr(C,start,pi-1,n);
+        quick_sort_recursive_arr(C,pi+1,end,n);
   }
 }
 
 void quick_locate_median3_container_arr(
     struct container *M3, struct container *C, int n)
 {
-
-    quick_sort_recursive_arr(C,0,n-1);
+    int med_l = (n+1)/2-1;
+    printf("%d\n", med_l);
+    //combine quick sort and copy median3;
+    quick_sort_recursive_arr(C,0,n-1, n);
 
     copy_container(M3,   C+(n+1)/2-2);
     copy_container(M3+1, C+(n+1)/2-1);
@@ -380,7 +370,7 @@ int main(int argc, char *argv[])
 
   // allocate 3 containers for median-1, median, median+1
   M3 = (struct container*)malloc_c(sizeof(struct container)*3);
-
+  
   // start timer
   reset_timer();
 
