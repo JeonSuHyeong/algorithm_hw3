@@ -303,22 +303,22 @@ void write_container_arr_textfile( const char outfile[],
 int quick_sort_partition(struct container *C, int start, int end){
   int i, j, pivot;
   struct container temp;
-
-  //pivot을 오른쪽 끝으로 선택, i는 오른쪽끝-1에서 시작
+  
+  //choose the pivot, initialize i as start
   pivot = end;
   i = start -1;
-  //pivot을 제외하고 앞뒤 비교하며 pivot위치 조정
+  //compare the strings and swap the location except the pivot;
   for(j = start; j<end;j++){
-    //j값을 증가시키며 pivot값을 비교한다.
+    //increase the j, and compare C[j] to C[pivot];
     if (compare_container_arr(C,j,pivot)<=0){
-      //만약 C[j]값이 pivot보다 작으면 앞쪽(C[i])으로 옮겨준다. 그리고 i주소를+1한다.
+      //if C[j] is lower than C[pivot], then increase i and swap the location.
       i++;
       swap_container_arr(C,i,j,&temp);
     }
   }
-  //마지막으로 pivot을 옮겨준다.
+  //swap the pivot
   swap_container_arr(C,i+1,end,&temp);
-  //pivot의 위치를 return한다.
+  //return the location of pivot;
   return i+1;
 }
 
@@ -326,9 +326,10 @@ void quick_sort_recursive_arr(struct container *C, int start, int end){
   int i,j,pi;
   struct container temp;
 
+  //implement condition
   if(start<end){
     pi = quick_sort_partition(C, start, end);
-
+    //implement both left and right containers
     quick_sort_recursive_arr(C,start,pi-1);
     quick_sort_recursive_arr(C,pi+1,end);
   }
@@ -336,20 +337,7 @@ void quick_sort_recursive_arr(struct container *C, int start, int end){
 
 void quick_sort_container_arr(struct container *C, int n) 
 { 
-
-  //필요한 기능
-  /*
-  1. partition
-  2. swap 구현되있음.
-  3. recursive call
-  */
-
-  /*
-  원래는 변수를 start, end 두개를 받아야하는데 변수를 하나만 받아서 바꿔야한다.
-  방법 1. 함수를 안에 하나 더 선언한다.
-  방법 2... 
-  */
-  //method 1.
+  //quick sort needs at least 3 arguments, So I defined new function.
   quick_sort_recursive_arr(C,0,n-1);
 }
 
