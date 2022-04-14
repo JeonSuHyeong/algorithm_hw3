@@ -300,13 +300,12 @@ void write_container_arr_textfile( const char outfile[],
 
 /* FILL: add any necessary functions for your code*/
 
-void heapify(struct container *C, int n, int i){
-  
+//heapify
+void heapify_max(struct container *C, int n, int i){
+    struct container temp;
     int largest = i;
     int left = 2 * i + 1;
     int right = 2 * i + 2;
-
-    struct container temp;
   
     if (left < n && compare_container_arr(C,left,largest) > 0)  largest = left;
     if (right < n && compare_container_arr(C,right,largest) > 0) largest = right;
@@ -314,33 +313,60 @@ void heapify(struct container *C, int n, int i){
     // Swap and continue heapifying if root is not largest
     if (largest != i) {
       swap_container_arr(C, i, largest, &temp);
-      heapify(C, n, largest);
+      heapify_max(C, n, largest);
     }
 }
 
+void heapify_min(struct container *C, int n, int i,int num){
+    struct container temp;
+
+
+    int smallest = i + num/2+1;
+    int left = 2 * i + num/2+1;
+    int right = 2 * i + num/2 +2;
+
+    if (i>num/2){
+      smallest -= (num/2+1);
+      left -= (num/2+1);
+      right -= (num/2+2);
+    }
+
+    printf("%d\n",i);
+
+    if (left < n && compare_container_arr(C,left,smallest) < 0)  smallest = left;
+    if (right < n && compare_container_arr(C,right,smallest) < 0) smallest = right;
+  
+    // Swap and continue heapifying if root is not largest
+    if (smallest != i) {
+      swap_container_arr(C, i, smallest, &temp);
+      heapify_min(C, n, smallest,num);
+    }
+}
 
 void heap_locate_median3_container_arr(
     struct container *M3, struct container *C, int n)
 {
+    int i, j;
     struct container temp;
+    int num = n;
 
-    //buildmaxheapify
-    for (int i = n / 2 - 1; i >= 0; i--)
-        heapify(C, n, i);
-
-    // Heap sort
-    for (int i = n - 1; i >= 0; i--) {
-        swap_container_arr(C, 0, i, &temp);
-
-        // Heapify root element to get highest element at root again
-        heapify(C, i, 0);
-        if (i<n/2-1){
-            break;
-        }
+    //Build max heap at left side
+    for(i = n/4-1; i>=0;i--){
+      heapify_max(C,n/2,i);
+      heapify_min(C,n,i,num);
     }
-    copy_container(M3,   C+(n+1)/2-2);
-    copy_container(M3+1, C+(n+1)/2-1);
-    copy_container(M3+2, C+(n+1)/2);
+
+    while(compare_container_arr(C,0,n/2+1)>0){
+      swap_container_arr(C,0,n/2+1,&temp);
+      heapify_max(C,n/2,0);
+      heapify_min(C,n,0,num); 
+    }
+
+    copy_container(M3,   C);
+    copy_container(M3+1, C+1);
+    copy_container(M3+2, C+n/2+1);
+    
+    
 }
 
 /////////////////////////////////////////////////////////////
